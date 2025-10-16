@@ -1,5 +1,6 @@
 package fi.paulcarlson
 
+import fi.paulcarlson.repository.FakeCampaignRepository
 import io.ktor.server.application.*
 
 fun main(args: Array<String>) {
@@ -7,7 +8,9 @@ fun main(args: Array<String>) {
 }
 
 fun Application.module() {
-    configureSerialization()
+    val repository = FakeCampaignRepository()
+
+    configureSerialization(repository)
     configureDatabases()
     configureRouting()
 }

@@ -1,0 +1,25 @@
+###
+GET http://localhost:8080/campaigns
+Content-Type: application/json
+
+<> 2025-10-16T201754.200.json
+
+###
+GET http://localhost:8080/campaigns/byId/1
+
+<> 2025-10-16T201846.200.json
+
+###
+GET http://localhost:8080/campaigns/byId/3
+
+<> 2025-10-16T201952.200.json
+
+###
+POST http://localhost:8080/campaigns
+Content-Type: application/json
+
+{
+  "id": 3,
+  "name": "Campaign 3",
+  "description": "The third campaign"
+}
