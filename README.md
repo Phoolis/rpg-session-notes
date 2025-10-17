@@ -1,5 +1,9 @@
 # rpg-session-notes
 
+Following the [JetBrains Exposed Documentation](https://www.jetbrains.com/help/exposed/home.html) and especially the sample from GitHub for [Exposed-ktor-R2DBC](https://github.com/JetBrains/Exposed/tree/main/samples/exposed-ktor-r2dbc). 
+
+---
+
 This project was created using the [Ktor Project Generator](https://start.ktor.io).
 
 Here are some useful links to get you started:
