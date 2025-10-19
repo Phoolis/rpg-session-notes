@@ -11,9 +11,9 @@ class ApplicationTest {
     @Test
     fun testRoot() = testApplication {
         application {
-            module()
+            testModule()
         }
-        client.get("/").apply {
+        client.get("/campaigns").apply {
             assertEquals(HttpStatusCode.OK, status)
         }
     }
