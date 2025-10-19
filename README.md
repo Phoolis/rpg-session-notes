@@ -1,5 +1,16 @@
 # rpg-session-notes
 
+Rebuilding my basic rpg-notes-app with newest technologies:
+
+- Kotlin instead of plain Java
+- Ktor instead of Spring Boot
+- Reactive and non-blocking
+  - R2dbc database driver and Kotlin co-routines
+- UUID primary keys
+  - Un-guessable
+  - Possibility of client-side id generation (eg. offline mode for mobile app)
+  - TODO: switch from v4 to v7 for time-ordering and sortability
+
 Following the [JetBrains Exposed Documentation](https://www.jetbrains.com/help/exposed/home.html) and especially the sample from GitHub for [Exposed-ktor-R2DBC](https://github.com/JetBrains/Exposed/tree/main/samples/exposed-ktor-r2dbc). 
 
 ---
