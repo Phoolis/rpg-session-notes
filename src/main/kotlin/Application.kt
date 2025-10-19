@@ -3,6 +3,8 @@ package fi.paulcarlson
 import fi.paulcarlson.domain.campaign.CampaignRepository
 import fi.paulcarlson.domain.campaign.DSLCampaignRepository
 import fi.paulcarlson.domain.campaign.FakeCampaignRepository
+import fi.paulcarlson.domain.session.DSLSessionRepository
+import fi.paulcarlson.domain.session.SessionRepository
 import fi.paulcarlson.plugins.configureDatabase
 import fi.paulcarlson.plugins.configureRouting
 import fi.paulcarlson.plugins.configureSerialization
@@ -19,6 +21,7 @@ suspend fun Application.module() {
 
     dependencies {
         provide<CampaignRepository> { DSLCampaignRepository() }
+        provide<SessionRepository> { DSLSessionRepository() }
     }
 
     configureRouting()
@@ -30,6 +33,7 @@ suspend fun Application.testModule() {
 
     dependencies {
         provide<CampaignRepository> { FakeCampaignRepository() }
+        // TODO: Implement FakeSessionRepository
     }
 
     configureRouting()

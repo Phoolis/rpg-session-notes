@@ -23,3 +23,15 @@ GET http://localhost:8080/campaigns/{{ campaignId }}
 
 ### DELETE Campaign 3
 DELETE http://localhost:8080/campaigns/{{ campaignId }}
+
+### POST New session for campaign
+POST http://localhost:8080/sessions
+Content-Type: application/json
+
+{
+  "campaignId": {{ campaignId }},
+  "date": "2025-10-15"
+}
+
+### GET All sessions for campaign
+GET http://localhost:8080/sessions/byCampaign/{{campaignId}}

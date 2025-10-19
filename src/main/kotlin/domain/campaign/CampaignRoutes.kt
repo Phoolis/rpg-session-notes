@@ -42,7 +42,6 @@ suspend fun Application.campaignRoutes() {
 
                 val campaign = campaignService.getCampaign(id)
                     ?: return@get call.respondText("No campaign found with ID $id", status = HttpStatusCode.NotFound)
-
                 call.respond(campaign)
             }
 

@@ -21,8 +21,8 @@ class DSLCampaignRepository : CampaignRepository {
     override suspend fun save(campaign: Campaign): CampaignId = dbQuery {
         if (campaign.id == null) {
             val id = Campaigns.insert {
-                it[Campaigns.name] = campaign.name
-                it[Campaigns.description] = campaign.description
+                it[name] = campaign.name
+                it[description] = campaign.description
             } get Campaigns.id
 
             CampaignId(id)

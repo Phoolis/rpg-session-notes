@@ -1,6 +1,7 @@
 package fi.paulcarlson.plugins
 
 import fi.paulcarlson.domain.campaign.Campaigns
+import fi.paulcarlson.domain.session.Sessions
 import io.ktor.server.application.Application
 import io.ktor.server.application.log
 import io.r2dbc.spi.ConnectionFactoryOptions
@@ -30,8 +31,10 @@ suspend fun Application.configureDatabase() {
     )
 
     suspendTransaction(db = database) {
-        // SchemaUtils.drop(Campaigns) // Disable re-creating the data for now
+        SchemaUtils.drop(Campaigns)
+        SchemaUtils.drop(Sessions)
         SchemaUtils.create(Campaigns)
+        SchemaUtils.create(Sessions)
     }
 
     log.info("Connecting to PostgreSQL at localhost:5432/$dbName as $dbUser")
