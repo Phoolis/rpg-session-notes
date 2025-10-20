@@ -7,8 +7,7 @@ class SessionService(
     private val sessionRepository: SessionRepository
 ) {
     suspend fun createSession(session: Session): Session {
-        val id = sessionRepository.save(session)
-        return session.copy(id = id)
+        return sessionRepository.save(session)
     }
 
     suspend fun getSessionById(id: UUID): Session? {
@@ -17,6 +16,10 @@ class SessionService(
 
     suspend fun getSessionsByCampaign(id: UUID): List<Session> {
         return sessionRepository.findByCampaign(CampaignId(id))
+    }
+
+    suspend fun editSession(session: Session): Session {
+        return sessionRepository.update(session)
     }
 
     suspend fun removeSession(id: UUID): Boolean {

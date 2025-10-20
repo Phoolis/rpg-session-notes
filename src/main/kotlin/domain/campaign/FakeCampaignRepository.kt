@@ -34,6 +34,10 @@ class FakeCampaignRepository: CampaignRepository {
         campaigns.find { it.id == id}
     }
 
+    override suspend fun update(campaign: Campaign): Campaign {
+        TODO("Not yet implemented")
+    }
+
     override suspend fun delete(id: CampaignId): Boolean = mutex.withLock {
         campaigns.removeIf { it.id == id }
     }

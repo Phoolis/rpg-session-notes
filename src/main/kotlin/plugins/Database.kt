@@ -31,10 +31,8 @@ suspend fun Application.configureDatabase() {
     )
 
     suspendTransaction(db = database) {
-        SchemaUtils.drop(Campaigns)
-        SchemaUtils.drop(Sessions)
-        SchemaUtils.create(Campaigns)
-        SchemaUtils.create(Sessions)
+        SchemaUtils.drop(Campaigns, Sessions)
+        SchemaUtils.create(Campaigns, Sessions)
     }
 
     log.info("Connecting to PostgreSQL at localhost:5432/$dbName as $dbUser")

@@ -18,6 +18,11 @@ class CampaignService(
         return campaignRepository.findById(CampaignId(id))
     }
 
+    suspend fun editCampaign(campaign: Campaign): Campaign {
+        // TODO: Add Error handling with custom exceptions. For now, we just propagate errors up to the routes layer.
+        return campaignRepository.update(campaign)
+    }
+
     suspend fun removeCampaign(id: UUID): Boolean {
         return campaignRepository.delete(CampaignId(id))
     }

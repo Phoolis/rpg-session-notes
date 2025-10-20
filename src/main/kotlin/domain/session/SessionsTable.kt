@@ -15,7 +15,7 @@ object Sessions : Table() {
         onDelete = ReferenceOption.CASCADE
     )
     val sessionNumber = integer("session_number")
-    val date = date("session_date")
+    val sessionDate = date("session_date")
 
     override val primaryKey = PrimaryKey(id)
 
@@ -28,5 +28,5 @@ fun rowToSession(result: ResultRow): Session = Session(
     id = SessionId(result[Sessions.id]),
     campaignId = CampaignId(result[Sessions.campaignId]),
     sessionNumber = result[Sessions.sessionNumber],
-    date = result[Sessions.date]
+    sessionDate = result[Sessions.sessionDate]
 )

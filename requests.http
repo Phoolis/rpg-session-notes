@@ -20,6 +20,16 @@ Content-Type: application/json
 ### GET Campaign 3
 GET http://localhost:8080/campaigns/{{ campaignId }}
 
+### PUT Edit campaign name
+PUT http://localhost:8080/campaigns/{{ campaignId }}
+Content-Type: application/json
+
+{
+  "id": {{ campaignId }},
+  "name": "Campaign III",
+  "description": "The third campaign is edited"
+}
+
 
 ### DELETE Campaign 3
 DELETE http://localhost:8080/campaigns/{{ campaignId }}
@@ -30,8 +40,25 @@ Content-Type: application/json
 
 {
   "campaignId": {{ campaignId }},
-  "date": "2025-10-15"
+  "sessionDate": "2025-10-15"
 }
 
+> {%
+    client.global.set("sessionId", response.body.id);
+%}
+
 ### GET All sessions for campaign
-GET http://localhost:8080/sessions/byCampaign/{{campaignId}}
+GET http://localhost:8080/sessions/byCampaign/{{ campaignId }}
+
+### PUT Edit session date
+PUT http://localhost:8080/sessions/{{ sessionId }}
+Content-Type: application/json
+
+{
+  "id": {{ sessionId }},
+  "campaignId": {{ campaignId }},
+  "sessionDate": "2025-10-18"
+}
+
+### DELETE A session
+DELETE http://localhost:8080/sessions/{{ sessionId }}

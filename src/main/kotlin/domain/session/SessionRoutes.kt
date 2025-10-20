@@ -9,8 +9,10 @@ import io.ktor.server.response.respondText
 import io.ktor.server.routing.delete
 import io.ktor.server.routing.get
 import io.ktor.server.routing.post
+import io.ktor.server.routing.put
 import io.ktor.server.routing.route
 import io.ktor.server.routing.routing
+import java.util.NoSuchElementException
 import java.util.UUID
 
 suspend fun Application.sessionRoutes() {
@@ -54,6 +56,29 @@ suspend fun Application.sessionRoutes() {
 
                 val campaignSessions = sessionService.getSessionsByCampaign(campaignId)
                 call.respond(HttpStatusCode.OK, campaignSessions)
+            }
+
+            put("{id}") {
+                val idParam = call.parameters["id"]
+                    ?: return@put call.respondText("Missing session ID", status = HttpStatusCode.BadRequest)
+
+                val id = try {
+                    UUID.fromString(idParam)
+                } catch (ex: IllegalArgumentException) {
+                    return@put call.respondText("Invalid session ID format", status = HttpStatusCode.BadRequest)
+                }
+
+                try {
+                    val session = call.receive<Session>()
+                    val updatedSession = sessionService.editSession(session)
+                    call.respond(HttpStatusCode.OK, updatedSession)
+                } catch (ex: IllegalArgumentException) {
+                    call.respond(HttpStatusCode.BadRequest, ex.message ?: "Bad request")
+                } catch (ex: NoSuchElementException) {
+                    call.respond(HttpStatusCode.NotFound, ex.message ?: "Session not found")
+                } catch (ex: Exception) {
+                    call.respond(HttpStatusCode.InternalServerError, ex.message ?: "Unexpected error")
+                }
             }
 
             delete("{id}") {

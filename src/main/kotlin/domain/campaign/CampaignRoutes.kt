@@ -9,8 +9,10 @@ import io.ktor.server.response.respondText
 import io.ktor.server.routing.delete
 import io.ktor.server.routing.get
 import io.ktor.server.routing.post
+import io.ktor.server.routing.put
 import io.ktor.server.routing.route
 import io.ktor.server.routing.routing
+import java.util.NoSuchElementException
 import java.util.UUID
 
 suspend fun Application.campaignRoutes() {
@@ -23,6 +25,29 @@ suspend fun Application.campaignRoutes() {
                 val campaign = call.receive<Campaign>()
                 val createdCampaign = campaignService.createCampaign(campaign)
                 call.respond(HttpStatusCode.Created, createdCampaign)
+            }
+
+            put("{id}") {
+                val idParam = call.parameters["id"]
+                    ?: return@put call.respondText("Missing campaign ID", status = HttpStatusCode.BadRequest)
+
+                val id = try {
+                    UUID.fromString(idParam)
+                } catch (ex: IllegalArgumentException) {
+                    return@put call.respondText("Invalid campaign ID format", status = HttpStatusCode.BadRequest)
+                }
+
+                try {
+                    val campaign = call.receive<Campaign>()
+                    val updatedCampaign = campaignService.editCampaign(campaign)
+                    call.respond(HttpStatusCode.OK, updatedCampaign)
+                } catch (ex: IllegalArgumentException) {
+                    call.respond(HttpStatusCode.BadRequest, ex.message ?: "Bad request")
+                } catch (ex: NoSuchElementException) {
+                    call.respond(HttpStatusCode.NotFound, ex.message ?: "Campaign not found")
+                } catch (ex: Exception) {
+                    call.respond(HttpStatusCode.InternalServerError, ex.message ?: "Unexpected error")
+                }
             }
 
             get {
@@ -44,6 +69,7 @@ suspend fun Application.campaignRoutes() {
                     ?: return@get call.respondText("No campaign found with ID $id", status = HttpStatusCode.NotFound)
                 call.respond(campaign)
             }
+
 
             delete("{id}") {
                 val idParam = call.parameters["id"]

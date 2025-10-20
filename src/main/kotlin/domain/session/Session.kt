@@ -18,5 +18,5 @@ data class Session(
     val id: SessionId? = null,
     val campaignId: CampaignId,
     val sessionNumber: Int? = null,
-    val date: LocalDate,
+    val sessionDate: LocalDate,
 )
