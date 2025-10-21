@@ -1,10 +1,12 @@
-### GET All campaigns
+# CAMPAIGNS
+
+### Retrieve all campaigns
 GET http://localhost:8080/campaigns
 
-### GET Rat Cellar Heroes
+###
 GET http://localhost:8080/campaigns/54e2d203-38dd-4f9a-a67d-dcab8f00952c
 
-###
+### Create new campaign
 POST http://localhost:8080/campaigns
 Content-Type: application/json
 
@@ -17,10 +19,10 @@ Content-Type: application/json
     client.global.set("campaignId", response.body.id);
 %}
 
-### GET Campaign 3
+### Retrieve specific campaign by id
 GET http://localhost:8080/campaigns/{{ campaignId }}
 
-### PUT Edit campaign name
+### Edit campaign name and description
 PUT http://localhost:8080/campaigns/{{ campaignId }}
 Content-Type: application/json
 
@@ -31,10 +33,12 @@ Content-Type: application/json
 }
 
 
-### DELETE Campaign 3
+### Remove specific campaign by id
 DELETE http://localhost:8080/campaigns/{{ campaignId }}
 
-### POST New session for campaign
+# SESSIONS
+
+### Create new session for campaign
 POST http://localhost:8080/sessions
 Content-Type: application/json
 
@@ -47,10 +51,10 @@ Content-Type: application/json
     client.global.set("sessionId", response.body.id);
 %}
 
-### GET All sessions for campaign
+### Retrieve all sessions for campaign
 GET http://localhost:8080/sessions/byCampaign/{{ campaignId }}
 
-### PUT Edit session date
+###  Edit session date
 PUT http://localhost:8080/sessions/{{ sessionId }}
 Content-Type: application/json
 
@@ -60,5 +64,42 @@ Content-Type: application/json
   "sessionDate": "2025-10-18"
 }
 
-### DELETE A session
+### Remove session
 DELETE http://localhost:8080/sessions/{{ sessionId }}
+
+
+# NOTES
+
+### Create new note for session
+POST http://localhost:8080/notes
+Content-Type: application/json
+
+{
+  "sessionId": {{ sessionId }},
+  "content": "They've taken the hobbits to Isengard!",
+  "authorName": "Legolas"
+}
+
+> {%
+    client.global.set("noteId", response.body.id);
+%}
+
+### Retrieve specific Note by id
+GET http://localhost:8080/notes/{{ noteId }}
+
+### Retrieve all notes for session
+GET http://localhost:8080/notes/bySession/{{ sessionId }}
+
+### Edit note content
+PUT http://localhost:8080/notes/{{ noteId }}
+Content-Type: application/json
+
+{
+  "id": {{ noteId }},
+  "sessionId": {{ sessionId }},
+  "content": "No, wait! The hobbits are behind me.",
+  "authorName": "Honey-Boo-Boo"
+}
+
+### Remove note
+DELETE http://localhost:8080/notes/{{ noteId }}

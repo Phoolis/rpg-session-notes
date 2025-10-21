@@ -3,6 +3,8 @@ package fi.paulcarlson
 import fi.paulcarlson.domain.campaign.CampaignRepository
 import fi.paulcarlson.domain.campaign.DSLCampaignRepository
 import fi.paulcarlson.domain.campaign.FakeCampaignRepository
+import fi.paulcarlson.domain.note.DSLNoteRepository
+import fi.paulcarlson.domain.note.NoteRepository
 import fi.paulcarlson.domain.session.DSLSessionRepository
 import fi.paulcarlson.domain.session.SessionRepository
 import fi.paulcarlson.plugins.configureDatabase
@@ -22,18 +24,21 @@ suspend fun Application.module() {
     dependencies {
         provide<CampaignRepository> { DSLCampaignRepository() }
         provide<SessionRepository> { DSLSessionRepository() }
+        provide<NoteRepository> { DSLNoteRepository() }
     }
 
     configureRouting()
 }
 
-// Test module skips the DB setup. I'll run tests in-memory for now
+
 suspend fun Application.testModule() {
     configureSerialization()
+    // configureDatabase() // Run tests in-memory for now
 
     dependencies {
         provide<CampaignRepository> { FakeCampaignRepository() }
         // TODO: Implement FakeSessionRepository
+        // TODO: Implement FakeNoteRepository
     }
 
     configureRouting()

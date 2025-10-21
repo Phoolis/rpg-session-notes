@@ -11,7 +11,7 @@ import java.util.UUID
 
 fun Application.configureSerialization() {
     val module = SerializersModule {
-        contextual(UUID::class, UUIDSerializer) // UUIDSerializer from util.UUIDSerializer
+        contextual(UUID::class, UUIDSerializer) // UUIDs need a custom serializer
     }
     install(ContentNegotiation) {
       json(

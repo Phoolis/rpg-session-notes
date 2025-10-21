@@ -39,10 +39,8 @@ class DSLSessionRepository : SessionRepository {
             it[sessionDate] = session.sessionDate
         }.single()
 
-        Session(
+        session.copy(
             id = SessionId(insertedRow[Sessions.id]),
-            campaignId = session.campaignId,
-            sessionDate = session.sessionDate,
             sessionNumber = insertedRow[Sessions.sessionNumber]
         )
     }
@@ -67,14 +65,15 @@ class DSLSessionRepository : SessionRepository {
     override suspend fun update(session: Session): Session = dbQuery {
         requireNotNull(session.id) { "Missing or invalid session ID" }
 
-        val updatedRows = Sessions.updateReturning(
+        val updatedRow = Sessions.updateReturning(
             where = { Sessions.id eq session.id.value }
         ) {
             it[sessionDate] = session.sessionDate
-        }
+        }.single()
 
-        updatedRows.singleOrNull()?.let(::rowToSession)
-            ?: throw NoSuchElementException("Session not found")
+        session.copy(
+            sessionDate = updatedRow[Sessions.sessionDate]
+        )
     }
 
     override suspend fun delete(id: SessionId): Boolean = dbQuery {

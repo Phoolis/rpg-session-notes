@@ -62,7 +62,7 @@ suspend fun Application.sessionRoutes() {
                 val idParam = call.parameters["id"]
                     ?: return@put call.respondText("Missing session ID", status = HttpStatusCode.BadRequest)
 
-                val id = try {
+                try {
                     UUID.fromString(idParam)
                 } catch (ex: IllegalArgumentException) {
                     return@put call.respondText("Invalid session ID format", status = HttpStatusCode.BadRequest)

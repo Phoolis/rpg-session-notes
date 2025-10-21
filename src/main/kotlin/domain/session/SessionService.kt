@@ -1,6 +1,7 @@
 package fi.paulcarlson.domain.session
 
 import fi.paulcarlson.domain.campaign.CampaignId
+import io.ktor.server.plugins.NotFoundException
 import java.util.UUID
 
 class SessionService(
@@ -14,12 +15,20 @@ class SessionService(
         return sessionRepository.findById(SessionId(id))
     }
 
-    suspend fun getSessionsByCampaign(id: UUID): List<Session> {
-        return sessionRepository.findByCampaign(CampaignId(id))
+    suspend fun getSessionsByCampaign(campaignId: UUID): List<Session> {
+        return sessionRepository.findByCampaign(CampaignId(campaignId))
     }
 
     suspend fun editSession(session: Session): Session {
-        return sessionRepository.update(session)
+        val existing = sessionRepository.findById(session.id!!)
+            ?: throw NotFoundException("Session not found")
+
+        // Only allow changing the session date
+        val updated = existing.copy(
+            sessionDate = session.sessionDate
+        )
+
+        return sessionRepository.update(updated)
     }
 
     suspend fun removeSession(id: UUID): Boolean {

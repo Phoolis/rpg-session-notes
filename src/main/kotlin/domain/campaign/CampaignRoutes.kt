@@ -31,7 +31,7 @@ suspend fun Application.campaignRoutes() {
                 val idParam = call.parameters["id"]
                     ?: return@put call.respondText("Missing campaign ID", status = HttpStatusCode.BadRequest)
 
-                val id = try {
+                try {
                     UUID.fromString(idParam)
                 } catch (ex: IllegalArgumentException) {
                     return@put call.respondText("Invalid campaign ID format", status = HttpStatusCode.BadRequest)
