@@ -1,13 +1,13 @@
 package fi.paulcarlson.domain.campaign
 
+import io.ktor.server.plugins.NotFoundException
 import java.util.UUID
 
 class CampaignService(
     private val campaignRepository: CampaignRepository
 ) {
     suspend fun createCampaign(campaign: Campaign): Campaign {
-        val id = campaignRepository.save(campaign)
-        return campaign.copy(id = id)
+        return campaignRepository.save(campaign)
     }
 
     suspend fun getCampaigns(): List<Campaign> {
@@ -19,8 +19,15 @@ class CampaignService(
     }
 
     suspend fun editCampaign(campaign: Campaign): Campaign {
-        // TODO: Add Error handling with custom exceptions. For now, we just propagate errors up to the routes layer.
-        return campaignRepository.update(campaign)
+        val existing = campaignRepository.findById(campaign.id!!)
+            ?: throw NotFoundException("Campaign not found")
+
+        // Only allow changing campaign name and description
+        val updated = existing.copy(
+            name = campaign.name,
+            description = campaign.description
+        )
+        return campaignRepository.update(updated)
     }
 
     suspend fun removeCampaign(id: UUID): Boolean {

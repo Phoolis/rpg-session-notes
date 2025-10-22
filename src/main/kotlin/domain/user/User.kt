@@ -1,4 +1,4 @@
-package fi.paulcarlson.domain.campaign
+package fi.paulcarlson.domain.user
 
 import fi.paulcarlson.util.UUIDSerializer
 import kotlinx.serialization.Serializable
@@ -7,17 +7,15 @@ import kotlin.time.Instant
 
 @JvmInline
 @Serializable
-value class CampaignId(
+value class UserId(
     @Serializable(with = UUIDSerializer::class)
     val value: UUID
 )
 
-@Serializable
-data class Campaign(
-    val id: CampaignId? = null,
-    val name: String,
-    val description: String,
-
+data class User(
+    val id: UserId? = null,
+    val username: String,
+    val email: String,
     val createdAt: Instant? = null,
     val modifiedAt: Instant? = null
 )

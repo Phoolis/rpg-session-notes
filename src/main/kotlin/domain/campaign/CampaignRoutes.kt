@@ -37,17 +37,9 @@ suspend fun Application.campaignRoutes() {
                     return@put call.respondText("Invalid campaign ID format", status = HttpStatusCode.BadRequest)
                 }
 
-                try {
-                    val campaign = call.receive<Campaign>()
-                    val updatedCampaign = campaignService.editCampaign(campaign)
-                    call.respond(HttpStatusCode.OK, updatedCampaign)
-                } catch (ex: IllegalArgumentException) {
-                    call.respond(HttpStatusCode.BadRequest, ex.message ?: "Bad request")
-                } catch (ex: NoSuchElementException) {
-                    call.respond(HttpStatusCode.NotFound, ex.message ?: "Campaign not found")
-                } catch (ex: Exception) {
-                    call.respond(HttpStatusCode.InternalServerError, ex.message ?: "Unexpected error")
-                }
+                val campaign = call.receive<Campaign>()
+                val updatedCampaign = campaignService.editCampaign(campaign)
+                call.respond(HttpStatusCode.OK, updatedCampaign)
             }
 
             get {

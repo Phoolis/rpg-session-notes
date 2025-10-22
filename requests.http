@@ -1,10 +1,8 @@
 # CAMPAIGNS
 
+
 ### Retrieve all campaigns
 GET http://localhost:8080/campaigns
-
-###
-GET http://localhost:8080/campaigns/54e2d203-38dd-4f9a-a67d-dcab8f00952c
 
 ### Create new campaign
 POST http://localhost:8080/campaigns
@@ -32,9 +30,9 @@ Content-Type: application/json
   "description": "The third campaign is edited"
 }
 
-
 ### Remove specific campaign by id
 DELETE http://localhost:8080/campaigns/{{ campaignId }}
+
 
 # SESSIONS
 

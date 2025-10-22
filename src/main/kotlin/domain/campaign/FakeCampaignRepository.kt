@@ -17,13 +17,15 @@ class FakeCampaignRepository: CampaignRepository {
         )
     }
 
-    override suspend fun save(campaign: Campaign): CampaignId = mutex.withLock {
+    override suspend fun save(campaign: Campaign): Campaign = mutex.withLock {
         val newId = campaign.id ?: CampaignId(UUID.randomUUID())
         if (campaigns.any { it.id == newId }) {
             throw IllegalStateException("Cannot duplicate campaign id!")
         }
-        campaigns.add(campaign.copy(id = newId))
-        newId
+        val newCampaign = campaign.copy(id = newId)
+        campaigns.add(newCampaign)
+        newCampaign
+
     }
 
     override suspend fun findAll(): List<Campaign> = mutex.withLock {

@@ -1,5 +1,6 @@
 package fi.paulcarlson.domain.session
 
+import fi.paulcarlson.domain.campaign.CampaignRepository
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.application.Application
 import io.ktor.server.plugins.di.dependencies
@@ -17,7 +18,8 @@ import java.util.UUID
 
 suspend fun Application.sessionRoutes() {
     val sessionRepository = dependencies.resolve<SessionRepository>()
-    val sessionService = SessionService(sessionRepository)
+    val campaignRepository = dependencies.resolve<CampaignRepository>()
+    val sessionService = SessionService(sessionRepository, campaignRepository)
 
     routing {
         route("/sessions") {

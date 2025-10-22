@@ -8,7 +8,7 @@ import org.jetbrains.exposed.v1.core.Table
 import org.jetbrains.exposed.v1.datetime.CurrentTimestamp
 import org.jetbrains.exposed.v1.datetime.timestamp
 
-object Notes : Table() {
+object Notes : Table("notes") {
     val id = uuid("id").autoGenerate()
     val sessionId = reference(
         name = "session_id",

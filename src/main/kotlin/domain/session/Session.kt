@@ -5,6 +5,7 @@ import fi.paulcarlson.util.UUIDSerializer
 import kotlinx.datetime.LocalDate
 import kotlinx.serialization.Serializable
 import java.util.UUID
+import kotlin.time.Instant
 
 @JvmInline
 @Serializable
@@ -19,4 +20,7 @@ data class Session(
     val campaignId: CampaignId,
     val sessionNumber: Int? = null,
     val sessionDate: LocalDate,
+
+    val createdAt: Instant? = null,
+    val modifiedAt: Instant? = null
 )

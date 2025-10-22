@@ -1,13 +1,17 @@
 package fi.paulcarlson.domain.session
 
 import fi.paulcarlson.domain.campaign.CampaignId
+import fi.paulcarlson.domain.campaign.CampaignRepository
 import io.ktor.server.plugins.NotFoundException
 import java.util.UUID
 
 class SessionService(
-    private val sessionRepository: SessionRepository
+    private val sessionRepository: SessionRepository,
+    private val campaignRepository: CampaignRepository
 ) {
     suspend fun createSession(session: Session): Session {
+        campaignRepository.findById(session.campaignId)
+            ?: throw NotFoundException("Campaign not found")
         return sessionRepository.save(session)
     }
 

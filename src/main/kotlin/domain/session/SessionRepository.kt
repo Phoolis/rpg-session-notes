@@ -9,6 +9,7 @@ import kotlinx.coroutines.flow.toList
 import org.jetbrains.exposed.v1.core.SortOrder
 import org.jetbrains.exposed.v1.core.eq
 import org.jetbrains.exposed.v1.core.max
+import org.jetbrains.exposed.v1.datetime.CurrentTimestamp
 import org.jetbrains.exposed.v1.r2dbc.deleteWhere
 import org.jetbrains.exposed.v1.r2dbc.insertReturning
 import org.jetbrains.exposed.v1.r2dbc.select
@@ -32,17 +33,14 @@ class DSLSessionRepository : SessionRepository {
             .singleOrNull()?.getOrNull(Sessions.sessionNumber.max()) ?: 0) + 1
 
         val insertedRow = Sessions.insertReturning(
-            returning = listOf(Sessions.id, Sessions.sessionNumber)
+            returning = Sessions.columns.toList()
         ) {
             it[campaignId] = session.campaignId.value
             it[sessionNumber] = nextNumber
             it[sessionDate] = session.sessionDate
         }.single()
 
-        session.copy(
-            id = SessionId(insertedRow[Sessions.id]),
-            sessionNumber = insertedRow[Sessions.sessionNumber]
-        )
+        rowToSession(insertedRow)
     }
 
     override suspend fun findByCampaign(campaignId: CampaignId): List<Session> = dbQuery {
@@ -66,14 +64,14 @@ class DSLSessionRepository : SessionRepository {
         requireNotNull(session.id) { "Missing or invalid session ID" }
 
         val updatedRow = Sessions.updateReturning(
-            where = { Sessions.id eq session.id.value }
+            where = { Sessions.id eq session.id.value },
+            returning = Sessions.columns.toList()
         ) {
             it[sessionDate] = session.sessionDate
+            it[modifiedAt] = CurrentTimestamp
         }.single()
 
-        session.copy(
-            sessionDate = updatedRow[Sessions.sessionDate]
-        )
+        rowToSession(updatedRow)
     }
 
     override suspend fun delete(id: SessionId): Boolean = dbQuery {
