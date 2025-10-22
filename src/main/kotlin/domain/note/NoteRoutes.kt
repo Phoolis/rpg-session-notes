@@ -28,7 +28,7 @@ suspend fun Application.noteRoutes() {
             post {
                 val note = call.receive<Note>()
                 val createdNote = noteService.createNote(note)
-                call.respond(HttpStatusCode.OK, createdNote)
+                call.respond(HttpStatusCode.Created, createdNote)
             }
 
             get("{id}") {

@@ -1,4 +1,4 @@
-# CAMPAIGNS
+### CAMPAIGNS
 
 
 ### Retrieve all campaigns
@@ -34,7 +34,7 @@ Content-Type: application/json
 DELETE http://localhost:8080/campaigns/{{ campaignId }}
 
 
-# SESSIONS
+### SESSIONS
 
 ### Create new session for campaign
 POST http://localhost:8080/sessions
@@ -66,7 +66,7 @@ Content-Type: application/json
 DELETE http://localhost:8080/sessions/{{ sessionId }}
 
 
-# NOTES
+### NOTES
 
 ### Create new note for session
 POST http://localhost:8080/notes
@@ -103,8 +103,66 @@ Content-Type: application/json
 DELETE http://localhost:8080/notes/{{ noteId }}
 
 
+### USERS
 
-# MALFORMED REQUESTS
+### Create user
+POST http://localhost:8080/users
+Content-Type: application/json
+
+{
+  "username": "Alice",
+  "email": "alice@example.com"
+}
+
+> {%
+    client.global.set("userId", response.body.id);
+%}
+
+### Create another user
+POST http://localhost:8080/users
+Content-Type: application/json
+
+{
+  "username": "Bob",
+  "email": "bob@example.com"
+}
+
+> {%
+    client.global.set("email", response.body.email);
+%}
+
+### Retrieve all users
+GET http://localhost:8080/users
+
+### Retrieve user by id
+GET http://localhost:8080/users/{{ userId }}
+
+### Retrieve user by email
+GET http://localhost:8080/users/email/{{ email }}
+
+### Edit user details
+PUT http://localhost:8080/users/{{ userId }}
+Content-Type: application/json
+
+{
+  "username": "Bob",
+  "email": "bobby.b+alias@example.com"
+}
+
+### Edit user details
+PUT http://localhost:8080/users/{{ userId }}
+Content-Type: application/json
+
+{
+  "username": "Alice",
+  "email": "bob@example.com"
+}
+
+### Remove user
+DELETE http://localhost:8080/users/{{ userId }}
+
+
+### MALFORMED REQUESTS
 
 ### Creating malformed campaign
 POST http://localhost:8080/campaigns

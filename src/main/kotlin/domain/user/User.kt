@@ -12,6 +12,7 @@ value class UserId(
     val value: UUID
 )
 
+@Serializable
 data class User(
     val id: UserId? = null,
     val username: String,

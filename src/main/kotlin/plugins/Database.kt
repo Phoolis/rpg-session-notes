@@ -3,6 +3,7 @@ package fi.paulcarlson.plugins
 import fi.paulcarlson.domain.campaign.Campaigns
 import fi.paulcarlson.domain.note.Notes
 import fi.paulcarlson.domain.session.Sessions
+import fi.paulcarlson.domain.user.Users
 import io.ktor.server.application.Application
 import io.ktor.server.application.log
 import io.r2dbc.spi.ConnectionFactoryOptions
@@ -34,9 +35,9 @@ suspend fun Application.configureDatabase() {
     log.info("Connecting to PostgreSQL at localhost:5432/$dbName as $dbUser")
 
     suspendTransaction(db = database) {
-        SchemaUtils.drop(Campaigns, Sessions, Notes)
-        SchemaUtils.create(Campaigns, Sessions, Notes)
+        SchemaUtils.drop(Campaigns, Sessions, Notes, Users)
+        SchemaUtils.create(Campaigns, Sessions, Notes, Users)
     }
 
-    log.info("Dropped and re-created tables: Campaigns, Sessions, Notes")
+    log.info("Dropped and re-created tables: Campaigns, Sessions, Notes, Users")
 }
