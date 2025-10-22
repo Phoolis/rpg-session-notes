@@ -1,7 +1,10 @@
 package fi.paulcarlson.domain.note
 
+import fi.paulcarlson.domain.session.SessionRepository
+import fi.paulcarlson.util.getUuidParam
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.application.Application
+import io.ktor.server.plugins.NotFoundException
 import io.ktor.server.plugins.di.dependencies
 import io.ktor.server.request.receive
 import io.ktor.server.response.respond
@@ -17,7 +20,8 @@ import java.util.UUID
 
 suspend fun Application.noteRoutes() {
     val noteRepository = dependencies.resolve<NoteRepository>()
-    val noteService = NoteService(noteRepository)
+    val sessionRepository = dependencies.resolve<SessionRepository>()
+    val noteService = NoteService(noteRepository, sessionRepository)
 
     routing {
         route("/notes") {
@@ -28,73 +32,35 @@ suspend fun Application.noteRoutes() {
             }
 
             get("{id}") {
-                val idParam = call.parameters["id"]
-                    ?: return@get call.respondText("Missing note ID", status = HttpStatusCode.BadRequest)
-
-                val id = try {
-                    UUID.fromString(idParam)
-                } catch (ex: IllegalArgumentException) {
-                    return@get call.respondText("Invalid note ID format", status = HttpStatusCode.BadRequest)
-                }
+                val id = call.getUuidParam("id")
 
                 val note = noteService.getNoteById(id)
-                    ?: return@get call.respondText("No note found with ID $id", status = HttpStatusCode.NotFound)
+                    ?: throw NotFoundException("Note not found")
                 call.respond(note)
             }
 
             get("/bySession/{sessionId}") {
-                val idParam = call.parameters["sessionId"]
-                    ?: return@get call.respondText("Missing session ID", status = HttpStatusCode.BadRequest)
-
-                val sessionId = try {
-                    UUID.fromString(idParam)
-                } catch (ex: IllegalArgumentException) {
-                    return@get call.respondText("Invalid session ID format", status = HttpStatusCode.BadRequest)
-                }
+                val sessionId = call.getUuidParam("sessionId")
 
                 val sessionNotes = noteService.getNotesBySession(sessionId)
                 call.respond(HttpStatusCode.OK, sessionNotes)
             }
 
             put("{id}") {
-                val idParam = call.parameters["id"]
-                    ?: return@put call.respondText("Missing note ID", status = HttpStatusCode.BadRequest)
+                val id = call.getUuidParam("id")
 
-                try {
-                    UUID.fromString(idParam)
-                } catch (ex: IllegalArgumentException) {
-                    return@put call.respondText("Invalid note ID format", status = HttpStatusCode.BadRequest)
-                }
-
-                try {
-                    val note = call.receive<Note>()
-                    val updatedNote = noteService.editNote(note)
-                    call.respond(HttpStatusCode.OK, updatedNote)
-                } catch (ex: IllegalArgumentException) {
-                    call.respond(HttpStatusCode.BadRequest, ex.message ?: "Bad request")
-                } catch (ex: NoSuchElementException) {
-                    call.respond(HttpStatusCode.NotFound, ex.message ?: "Note not found")
-                } catch (ex: Exception) {
-                    call.respond(HttpStatusCode.InternalServerError, ex.message ?: "Unexpected error")
-                }
+                val note = call.receive<Note>()
+                val updatedNote = noteService.editNote(note.copy(id = NoteId(id)))
+                call.respond(HttpStatusCode.OK, updatedNote)
             }
 
             delete("{id}") {
-                val idParam = call.parameters["id"]
-                    ?: return@delete call.respondText("Missing note ID", status = HttpStatusCode.BadRequest)
+                val id = call.getUuidParam("id")
 
-                val id = try {
-                    UUID.fromString(idParam)
-                } catch (ex: IllegalArgumentException) {
-                    return@delete call.respondText("Invalid note ID format", status = HttpStatusCode.BadRequest)
-                }
-
-                val success = noteService.removeNote(id)
-                if (success) {
-                    call.respond(HttpStatusCode.NoContent)
-                } else {
-                    call.respondText("Note with ID = $id not found", status = HttpStatusCode.NotFound)
-                }
+                noteService.removeNote(id)
+                    .takeIf { it }
+                    ?: throw NotFoundException("Note not found")
+                call.respond(HttpStatusCode.NoContent)
             }
         }
     }

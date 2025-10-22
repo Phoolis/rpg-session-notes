@@ -20,6 +20,8 @@ class SessionService(
     }
 
     suspend fun getSessionsByCampaign(campaignId: UUID): List<Session> {
+        campaignRepository.findById(CampaignId(campaignId))
+            ?: throw NotFoundException("Campaign not found")
         return sessionRepository.findByCampaign(CampaignId(campaignId))
     }
 

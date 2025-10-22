@@ -25,18 +25,14 @@ interface NoteRepository : BaseRepository {
 class DSLNoteRepository : NoteRepository {
     override suspend fun save(note: Note): Note = dbQuery {
         val insertedRow = Notes.insertReturning(
-            returning = listOf(Notes.id, Notes.createdAt)
+            returning = Notes.columns.toList()
         ) {
             it[sessionId] = note.sessionId.value
             it[content] = note.content
             it[authorName] = note.authorName
         }.single()
 
-        note.copy(
-            id = NoteId(insertedRow[Notes.id]),
-            createdAt = insertedRow[Notes.createdAt],
-            modifiedAt = null
-        )
+        rowToNote(insertedRow)
     }
 
     override suspend fun findBySession(sessionId: SessionId): List<Note> = dbQuery {
@@ -61,15 +57,13 @@ class DSLNoteRepository : NoteRepository {
 
         val updatedRow = Notes.updateReturning(
             where = { Notes.id eq note.id.value },
-            returning = listOf(Notes.modifiedAt)
+            returning = Notes.columns.toList()
         ) {
             it[content] = note.content
             it[modifiedAt] = CurrentTimestamp
         }.single()
 
-        note.copy(
-            modifiedAt = updatedRow[Notes.modifiedAt]
-        )
+        rowToNote(updatedRow)
     }
 
     override suspend fun delete(id: NoteId): Boolean = dbQuery {

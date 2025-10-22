@@ -1,13 +1,17 @@
 package fi.paulcarlson.domain.note
 
 import fi.paulcarlson.domain.session.SessionId
+import fi.paulcarlson.domain.session.SessionRepository
 import io.ktor.server.plugins.NotFoundException
 import java.util.UUID
 
 class NoteService(
-    private val noteRepository: NoteRepository
+    private val noteRepository: NoteRepository,
+    private val sessionRepository: SessionRepository
 ) {
     suspend fun createNote(note: Note): Note {
+        sessionRepository.findById(note.sessionId)
+            ?: throw NotFoundException("Session not found")
         return noteRepository.save(note)
     }
 
@@ -16,6 +20,8 @@ class NoteService(
     }
 
     suspend fun getNotesBySession(sessionId: UUID): List<Note> {
+        sessionRepository.findById(SessionId(sessionId))
+            ?: throw NotFoundException("Session not found")
         return noteRepository.findBySession(SessionId(sessionId))
     }
 

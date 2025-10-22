@@ -30,6 +30,8 @@ class DSLSessionRepository : SessionRepository {
         val nextNumber = (Sessions
             .select(Sessions.sessionNumber.max())
             .where { Sessions.campaignId eq session.campaignId.value }
+            // Find the largest session number and add 1.
+            // Preserves session order if one session is deleted from between before creating a new one.
             .singleOrNull()?.getOrNull(Sessions.sessionNumber.max()) ?: 0) + 1
 
         val insertedRow = Sessions.insertReturning(
@@ -61,6 +63,7 @@ class DSLSessionRepository : SessionRepository {
     }
 
     override suspend fun update(session: Session): Session = dbQuery {
+        // Check for session id since it's nullable
         requireNotNull(session.id) { "Missing or invalid session ID" }
 
         val updatedRow = Sessions.updateReturning(
@@ -68,7 +71,7 @@ class DSLSessionRepository : SessionRepository {
             returning = Sessions.columns.toList()
         ) {
             it[sessionDate] = session.sessionDate
-            it[modifiedAt] = CurrentTimestamp
+            it[modifiedAt] = CurrentTimestamp // DB generated
         }.single()
 
         rowToSession(updatedRow)

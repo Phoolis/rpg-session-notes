@@ -101,3 +101,24 @@ Content-Type: application/json
 
 ### Remove note
 DELETE http://localhost:8080/notes/{{ noteId }}
+
+
+
+# MALFORMED REQUESTS
+
+### Creating malformed campaign
+POST http://localhost:8080/campaigns
+Content-Type: application/json
+
+{
+  "description": 5
+}
+
+### Malformed campaign: name too long
+POST http://localhost:8080/campaigns
+Content-Type: application/json
+
+{
+  "name": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam...",
+  "description": "Far too long."
+}
