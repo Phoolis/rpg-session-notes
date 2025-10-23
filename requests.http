@@ -162,6 +162,21 @@ Content-Type: application/json
 DELETE http://localhost:8080/users/{{ userId }}
 
 
+### CHARACTERS
+
+
+### Create a user character for campaign
+POST http://localhost:8080/characters
+Content-Type: application/json
+
+{
+  "campaignId": {{ campaignId }},
+  "userId": {{ userId }},
+  "name": "Legolas",
+  "role": "PLAYER"
+}
+
+
 ### MALFORMED REQUESTS
 
 ### Creating malformed campaign

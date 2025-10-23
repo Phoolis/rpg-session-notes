@@ -1,6 +1,7 @@
 package fi.paulcarlson.plugins
 
 import fi.paulcarlson.domain.campaign.campaignRoutes
+import fi.paulcarlson.domain.character.characterRoutes
 import fi.paulcarlson.domain.note.noteRoutes
 import fi.paulcarlson.domain.session.sessionRoutes
 import fi.paulcarlson.domain.user.userRoutes
@@ -11,4 +12,5 @@ suspend fun Application.configureRouting() {
     sessionRoutes()
     noteRoutes()
     userRoutes()
+    characterRoutes()
 }

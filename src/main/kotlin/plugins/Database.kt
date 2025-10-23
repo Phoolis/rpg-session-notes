@@ -1,6 +1,7 @@
 package fi.paulcarlson.plugins
 
 import fi.paulcarlson.domain.campaign.Campaigns
+import fi.paulcarlson.domain.character.Characters
 import fi.paulcarlson.domain.note.Notes
 import fi.paulcarlson.domain.session.Sessions
 import fi.paulcarlson.domain.user.Users
@@ -35,9 +36,9 @@ suspend fun Application.configureDatabase() {
     log.info("Connecting to PostgreSQL at localhost:5432/$dbName as $dbUser")
 
     suspendTransaction(db = database) {
-        SchemaUtils.drop(Campaigns, Sessions, Notes, Users)
-        SchemaUtils.create(Campaigns, Sessions, Notes, Users)
+        SchemaUtils.drop(Campaigns, Sessions, Notes, Users, Characters)
+        SchemaUtils.create(Campaigns, Sessions, Notes, Users, Characters)
     }
 
-    log.info("Dropped and re-created tables: Campaigns, Sessions, Notes, Users")
+    log.info("Dropped and re-created tables: Campaigns, Sessions, Notes, Users, Characters")
 }

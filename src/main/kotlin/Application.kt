@@ -3,6 +3,8 @@ package fi.paulcarlson
 import fi.paulcarlson.domain.campaign.CampaignRepository
 import fi.paulcarlson.domain.campaign.DSLCampaignRepository
 import fi.paulcarlson.domain.campaign.FakeCampaignRepository
+import fi.paulcarlson.domain.character.CharacterRepository
+import fi.paulcarlson.domain.character.DSLCharacterRepository
 import fi.paulcarlson.domain.note.DSLNoteRepository
 import fi.paulcarlson.domain.note.NoteRepository
 import fi.paulcarlson.domain.session.DSLSessionRepository
@@ -32,6 +34,7 @@ suspend fun Application.module() {
         provide<SessionRepository> { DSLSessionRepository() }
         provide<NoteRepository> { DSLNoteRepository() }
         provide<UserRepository> { DSLUserRepository() }
+        provide<CharacterRepository> { DSLCharacterRepository() }
     }
 
     configureRouting()
