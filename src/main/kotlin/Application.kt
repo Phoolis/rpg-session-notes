@@ -10,6 +10,7 @@ import fi.paulcarlson.domain.session.SessionRepository
 import fi.paulcarlson.domain.user.DSLUserRepository
 import fi.paulcarlson.domain.user.UserRepository
 import fi.paulcarlson.plugins.configureDatabase
+import fi.paulcarlson.plugins.configureMonitoring
 import fi.paulcarlson.plugins.configureRouting
 import fi.paulcarlson.plugins.configureSerialization
 import fi.paulcarlson.plugins.configureStatusPages
@@ -21,6 +22,7 @@ fun main(args: Array<String>) {
 }
 
 suspend fun Application.module() {
+    configureMonitoring()
     configureSerialization()
     configureDatabase()
 
@@ -37,6 +39,7 @@ suspend fun Application.module() {
 
 
 suspend fun Application.testModule() {
+    configureMonitoring()
     configureSerialization()
     // configureDatabase() // Run tests in-memory for now
 
