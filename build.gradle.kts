@@ -37,6 +37,7 @@ dependencies {
     implementation("io.ktor:ktor-serialization-jackson:3.3.0")
     implementation("io.ktor:ktor-server-di:3.3.0")
     implementation("io.ktor:ktor-server-call-logging:3.3.0")
+    implementation("io.ktor:ktor-server-request-validation:3.3.0")
     testImplementation("io.ktor:ktor-server-test-host")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version")
 }

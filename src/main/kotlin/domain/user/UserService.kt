@@ -8,9 +8,8 @@ class UserService(
     private val userRepository: UserRepository
 ) {
     suspend fun createUser(user: User): User {
-        if (userRepository.findByEmail(user.email) != null) {
+        if (userRepository.findByEmail(user.email) != null)
             throw BadRequestException("User exists with email: ${user.email}")
-        }
         return userRepository.save(user)
     }
 
@@ -30,9 +29,8 @@ class UserService(
         val existing = userRepository.findById(user.id!!)
             ?: throw NotFoundException("User not found")
 
-        if (existing.email != user.email && userRepository.findByEmail(user.email) != null) {
+        if (existing.email != user.email && userRepository.findByEmail(user.email) != null)
             throw BadRequestException("Email already in use")
-        }
 
         val updated = existing.copy(
             username = user.username,

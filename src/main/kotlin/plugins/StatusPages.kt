@@ -5,6 +5,7 @@ import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.plugins.BadRequestException
 import io.ktor.server.plugins.NotFoundException
+import io.ktor.server.plugins.requestvalidation.RequestValidationException
 import io.ktor.server.plugins.statuspages.*
 import io.ktor.server.request.uri
 import io.ktor.server.response.*
@@ -30,6 +31,18 @@ fun Application.configureStatusPages() {
                     status = HttpStatusCode.NotFound.value,
                     error = HttpStatusCode.NotFound.description,
                     message = cause.message ?: "Resource not found",
+                    path = call.request.uri
+                )
+            )
+        }
+
+        exception<RequestValidationException> { call, cause ->
+            call.respond(
+                HttpStatusCode.BadRequest,
+                ErrorResponse(
+                    status = HttpStatusCode.BadRequest.value,
+                    error = HttpStatusCode.BadRequest.description,
+                    message = cause.reasons.joinToString(),
                     path = call.request.uri
                 )
             )

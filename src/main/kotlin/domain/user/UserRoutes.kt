@@ -46,9 +46,8 @@ suspend fun Application.userRoutes() {
                     ?: throw BadRequestException("Missing email in request path")
                 val email = emailParam.decodeURLPart() // Decode %40 to @ etc.
 
-                if (!email.contains("@")) {
+                if (!email.contains("@"))
                     throw BadRequestException("Invalid email format")
-                }
 
                 val user = userService.getUserByEmail(email)
                     ?: throw NotFoundException("User not found with email: $email")

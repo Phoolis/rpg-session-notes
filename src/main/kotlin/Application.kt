@@ -14,6 +14,7 @@ import fi.paulcarlson.plugins.configureMonitoring
 import fi.paulcarlson.plugins.configureRouting
 import fi.paulcarlson.plugins.configureSerialization
 import fi.paulcarlson.plugins.configureStatusPages
+import fi.paulcarlson.plugins.configureValidation
 import io.ktor.server.application.*
 import io.ktor.server.plugins.di.dependencies
 
@@ -35,9 +36,10 @@ suspend fun Application.module() {
 
     configureRouting()
     configureStatusPages()
+    configureValidation()
 }
 
-
+// TODO: Move testModule into the test folder if possible
 suspend fun Application.testModule() {
     configureMonitoring()
     configureSerialization()
@@ -51,4 +53,5 @@ suspend fun Application.testModule() {
 
     configureRouting()
     configureStatusPages()
+    configureValidation()
 }
