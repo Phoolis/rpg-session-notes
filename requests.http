@@ -195,3 +195,23 @@ Content-Type: application/json
   "name": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam...",
   "description": ""
 }
+
+
+### AUTHENTICATION
+
+### Retrieve and save a JWT token
+POST http://localhost:8080/login
+Content-Type: application/json
+
+{
+  "username": "Alice",
+  "email": "alice@example.com"
+}
+
+> {%
+    client.global.set("auth_token", response.body.token);
+%}
+
+### Use a JWT token to authorize access
+GET http://localhost:8080/hello
+Authorization: Bearer {{auth_token}}

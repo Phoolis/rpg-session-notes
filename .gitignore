@@ -4,6 +4,8 @@ build/
 !**/src/main/**/build/
 !**/src/test/**/build/
 
+private_key.pem
+
 ### STS ###
 .apt_generated
 .classpath

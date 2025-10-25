@@ -11,6 +11,7 @@ import fi.paulcarlson.domain.session.DSLSessionRepository
 import fi.paulcarlson.domain.session.SessionRepository
 import fi.paulcarlson.domain.user.DSLUserRepository
 import fi.paulcarlson.domain.user.UserRepository
+import fi.paulcarlson.plugins.configureAuthentication
 import fi.paulcarlson.plugins.configureDatabase
 import fi.paulcarlson.plugins.configureMonitoring
 import fi.paulcarlson.plugins.configureRouting
@@ -37,6 +38,7 @@ suspend fun Application.module() {
         provide<CharacterRepository> { DSLCharacterRepository() }
     }
 
+    configureAuthentication()
     configureRouting()
     configureStatusPages()
     configureValidation()
@@ -54,6 +56,7 @@ suspend fun Application.testModule() {
         // TODO: Implement FakeNoteRepository
     }
 
+    configureAuthentication()
     configureRouting()
     configureStatusPages()
     configureValidation()
