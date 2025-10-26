@@ -1,5 +1,6 @@
 package fi.paulcarlson
 
+import com.auth0.jwk.JwkProviderBuilder
 import fi.paulcarlson.domain.campaign.CampaignRepository
 import fi.paulcarlson.domain.campaign.DSLCampaignRepository
 import fi.paulcarlson.domain.campaign.FakeCampaignRepository
@@ -7,10 +8,12 @@ import fi.paulcarlson.domain.character.CharacterRepository
 import fi.paulcarlson.domain.character.DSLCharacterRepository
 import fi.paulcarlson.domain.note.DSLNoteRepository
 import fi.paulcarlson.domain.note.NoteRepository
+import fi.paulcarlson.domain.security.JwtService
 import fi.paulcarlson.domain.session.DSLSessionRepository
 import fi.paulcarlson.domain.session.SessionRepository
 import fi.paulcarlson.domain.user.DSLUserRepository
 import fi.paulcarlson.domain.user.UserRepository
+import fi.paulcarlson.domain.user.UserService
 import fi.paulcarlson.plugins.configureAuthentication
 import fi.paulcarlson.plugins.configureDatabase
 import fi.paulcarlson.plugins.configureMonitoring
@@ -20,6 +23,7 @@ import fi.paulcarlson.plugins.configureStatusPages
 import fi.paulcarlson.plugins.configureValidation
 import io.ktor.server.application.*
 import io.ktor.server.plugins.di.dependencies
+import java.util.concurrent.TimeUnit
 
 fun main(args: Array<String>) {
     io.ktor.server.netty.EngineMain.main(args)
@@ -38,7 +42,19 @@ suspend fun Application.module() {
         provide<CharacterRepository> { DSLCharacterRepository() }
     }
 
-    configureAuthentication()
+    // Please read the jwt property from the config file if you are using EngineMain
+    // TODO: Generate new rs256 key and move it to .env
+    val jwtConfig = environment.config.config("jwt")
+    val issuer = jwtConfig.property("issuer").getString()
+    val jwkProvider = JwkProviderBuilder(issuer)
+        .cached(10, 24, TimeUnit.HOURS)
+        .rateLimited(10, 1, TimeUnit.MINUTES)
+        .build()
+
+    val userService = UserService(dependencies.resolve())
+    val jwtService = JwtService(jwtConfig, jwkProvider, userService)
+
+    configureAuthentication(jwtService, jwkProvider, issuer)
     configureRouting()
     configureStatusPages()
     configureValidation()
@@ -56,7 +72,6 @@ suspend fun Application.testModule() {
         // TODO: Implement FakeNoteRepository
     }
 
-    configureAuthentication()
     configureRouting()
     configureStatusPages()
     configureValidation()
