@@ -35,11 +35,11 @@ class JwtService(
         return KeyFactory.getInstance("RSA").generatePrivate(keySpecPKCS8) as RSAPrivateKey
     }
 
-    fun createJwtToken(email: String): String =
+    fun createJwtToken(user: User): String =
         JWT.create()
             .withAudience(audience)
             .withIssuer(issuer)
-            .withClaim("email", email)
+            .withClaim("email", user.email)
             .withExpiresAt(Date(System.currentTimeMillis() + 3_600_000))
             .sign(Algorithm.RSA256(getRSAPublicKey(), getRSAPrivateKey()))
 

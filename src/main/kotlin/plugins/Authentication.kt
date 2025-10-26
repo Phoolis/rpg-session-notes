@@ -3,11 +3,13 @@ package fi.paulcarlson.plugins
 import com.auth0.jwk.JwkProvider
 import fi.paulcarlson.domain.security.JwtService
 import fi.paulcarlson.domain.user.User
+import fi.paulcarlson.domain.user.UserService
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.application.*
 import io.ktor.server.auth.*
 import io.ktor.server.auth.jwt.*
 import io.ktor.server.http.content.staticFiles
+import io.ktor.server.plugins.NotFoundException
 import io.ktor.server.request.receive
 import io.ktor.server.response.respond
 import io.ktor.server.response.respondText
@@ -15,11 +17,13 @@ import io.ktor.server.routing.get
 import io.ktor.server.routing.post
 import io.ktor.server.routing.routing
 import java.io.File
+import java.util.UUID
 
 fun Application.configureAuthentication(
     jwtService: JwtService,
     jwkProvider: JwkProvider,
-    issuer: String
+    issuer: String,
+    userService: UserService
 ) {
 
     install(Authentication) {
@@ -40,7 +44,9 @@ fun Application.configureAuthentication(
         post("/login") {
             val user = call.receive<User>()
             // TODO: OAuth here?
-            val token = jwtService.createJwtToken(user.email)
+            val existingUser = userService.getUserByEmail(user.email)
+                ?: throw NotFoundException("User not found")
+            val token = jwtService.createJwtToken(existingUser)
             call.respond(mapOf("token" to token))
         }
 

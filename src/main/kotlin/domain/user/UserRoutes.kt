@@ -4,6 +4,10 @@ import fi.paulcarlson.util.getUuidParam
 import io.ktor.http.HttpStatusCode
 import io.ktor.http.decodeURLPart
 import io.ktor.server.application.Application
+import io.ktor.server.application.ApplicationCall
+import io.ktor.server.auth.authenticate
+import io.ktor.server.auth.jwt.JWTPrincipal
+import io.ktor.server.auth.principal
 import io.ktor.server.plugins.BadRequestException
 import io.ktor.server.plugins.NotFoundException
 import io.ktor.server.plugins.di.dependencies
@@ -33,43 +37,64 @@ suspend fun Application.userRoutes() {
                 call.respond(HttpStatusCode.OK, allUsers)
             }
 
-            get("{id}") {
-                val id = call.getUuidParam("id")
+            authenticate("auth-jwt") {
+                get("{id}") {
+                    val id = call.getUuidParam("id")
 
-                val user = userService.getUserById(id)
-                    ?: throw NotFoundException("User not found")
-                call.respond(HttpStatusCode.OK, user)
-            }
+                    val user = userService.getUserById(id)
+                        ?: throw NotFoundException("User not found")
+                    if (user.email != extractPrincipalEmail(call))
+                        throw NotFoundException("User not found")
+                    call.respond(HttpStatusCode.OK, user)
+                }
 
-            get("/email/{email}") {
-                val emailParam = call.parameters["email"]
-                    ?: throw BadRequestException("Missing email in request path")
-                val email = emailParam.decodeURLPart() // Decode %40 to @ etc.
+                get("/email/{email}") {
+                    val emailParam = call.parameters["email"]
+                        ?: throw BadRequestException("Missing email in request path")
+                    val email = emailParam.decodeURLPart() // Decode %40 to @ etc.
 
-                if (!email.contains("@"))
-                    throw BadRequestException("Invalid email format")
+                    if (!email.contains("@"))
+                        throw BadRequestException("Invalid email format")
 
-                val user = userService.getUserByEmail(email)
-                    ?: throw NotFoundException("User not found with email: $email")
-                call.respond(HttpStatusCode.OK, user)
-            }
+                    val user = userService.getUserByEmail(email)
+                        ?: throw NotFoundException("User not found with email: $email")
+                    if (user.email != extractPrincipalEmail(call))
+                        throw NotFoundException("User not found")
+                    call.respond(HttpStatusCode.OK, user)
+                }
 
-            put("{id}") {
-                val id = call.getUuidParam("id")
+                put("{id}") {
+                    val id = call.getUuidParam("id")
 
-                val user = call.receive<User>()
-                val updated = userService.editUser(user.copy(id = UserId(id)))
-                call.respond(HttpStatusCode.OK, updated)
-            }
+                    val user = call.receive<User>()
+                    val existingUser = userService.getUserById(id)
+                        ?: throw NotFoundException("User not found")
+                    if (existingUser.email != extractPrincipalEmail(call))
+                        throw NotFoundException("User not found")
+                    val updated = userService.editUser(user.copy(id = UserId(id)))
+                    call.respond(HttpStatusCode.OK, updated)
+                }
 
-            delete("{id}") {
-                val id = call.getUuidParam("id")
+                delete("{id}") {
+                    val id = call.getUuidParam("id")
 
-                userService.removeUser(id)
-                    .takeIf { it }
-                    ?: throw NotFoundException("User not found")
-                call.respond(HttpStatusCode.NoContent)
+                    val existingUser = userService.getUserById(id)
+                        ?: throw NotFoundException("User not found")
+                    if (existingUser.email != extractPrincipalEmail(call))
+                        throw NotFoundException("User not found")
+
+                    userService.removeUser(id)
+                        .takeIf { it }
+                        ?: throw NotFoundException("User not found")
+                    call.respond(HttpStatusCode.NoContent)
+                }
             }
         }
     }
 }
+
+private fun extractPrincipalEmail(call: ApplicationCall): String? =
+    call.principal<JWTPrincipal>()
+        ?.payload
+        ?.getClaim("email")
+        ?.asString()

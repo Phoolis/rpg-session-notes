@@ -54,7 +54,7 @@ suspend fun Application.module() {
     val userService = UserService(dependencies.resolve())
     val jwtService = JwtService(jwtConfig, jwkProvider, userService)
 
-    configureAuthentication(jwtService, jwkProvider, issuer)
+    configureAuthentication(jwtService, jwkProvider, issuer, userService)
     configureRouting()
     configureStatusPages()
     configureValidation()

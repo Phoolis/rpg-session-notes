@@ -133,16 +133,20 @@ Content-Type: application/json
 
 ### Retrieve all users
 GET http://localhost:8080/users
+Authorization: Bearer {{auth_token}}
 
 ### Retrieve user by id
 GET http://localhost:8080/users/{{ userId }}
+Authorization: Bearer {{auth_token}}
 
 ### Retrieve user by email
 GET http://localhost:8080/users/email/{{ email }}
+Authorization: Bearer {{auth_token}}
 
 ### Edit user details
 PUT http://localhost:8080/users/{{ userId }}
 Content-Type: application/json
+Authorization: Bearer {{auth_token}}
 
 {
   "username": "Bob",
@@ -152,6 +156,7 @@ Content-Type: application/json
 ### Edit user details
 PUT http://localhost:8080/users/{{ userId }}
 Content-Type: application/json
+Authorization: Bearer {{auth_token}}
 
 {
   "username": "Alice",
@@ -160,6 +165,7 @@ Content-Type: application/json
 
 ### Remove user
 DELETE http://localhost:8080/users/{{ userId }}
+Authorization: Bearer {{auth_token}}
 
 
 ### CHARACTERS
